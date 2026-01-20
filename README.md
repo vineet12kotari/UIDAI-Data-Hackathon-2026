@@ -244,7 +244,7 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ## 📄 **Documentation**
 
-- [📋 Complete Submission Document](documentation/UIDAI_Hackathon_Final_Submission.pdf)
+- [📋 Complete Submission Document](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/documentation/UIDAI%20DATA%20HACKATHON%202026%20(1).pdf)
 ---
 
 ## 📜 **License & Compliance**
