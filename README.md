@@ -1,30 +1,35 @@
-# 🏆 UIDAI Data Hackathon 2026 
+<h1 align="center">
+UIDAI Data Hackathon 2026 - Submission Entry 
+</h1>
 
-## **Aadhaar as a Lifecycle-Driven Identity Infrastructure**
+<p align="center">
+<a href="#-executive-summary"><img src="https://img.shields.io/badge/📊-Executive_Summary-2196F3?style=flat-square" alt="Summary"/></a>
+<a href="#-quick-start"><img src="https://img.shields.io/badge/🚀-Quick_Start-4CAF50?style=flat-square" alt="Quick Start"/></a>
+<a href="#-dashboard-pages"><img src="https://img.shields.io/badge/📈-Dashboard-9C27B0?style=flat-square" alt="Dashboard"/></a>
+<a href="#-policy-recommendations"><img src="https://img.shields.io/badge/💡-Policy_Insights-FF9800?style=flat-square" alt="Insights"/></a>
+</p>
 
-[![Hackathon](https://img.shields.io/badge/UIDAI-Data%20Hackathon%202026-blue)](https://event.data.gov.in)
-[![Tech Stack](https://img.shields.io/badge/Tech-Snowflake%20%7C%20Power%20BI%20%7C%20SQL-green)](https://github.com)
-[![Innovation](https://img.shields.io/badge/Innovation-IMF%20Metric-red)](https://github.com)
+<p align="center">
+<img src="https://img.shields.io/badge/Snowflake-29B5E8?style=for-the-badge&logo=snowflake&logoColor=white" alt="Snowflake"/>
+<img src="https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black" alt="Power BI"/>
+<img src="https://img.shields.io/badge/Districts-759-blueviolet?style=for-the-badge" alt="Districts"/>
+<img src="https://img.shields.io/badge/Records-60K+-blue?style=for-the-badge" alt="Records"/>
+<img src="https://img.shields.io/badge/SQL-Advanced_Analytics-F7931E?style=for-the-badge&logo=postgresql&logoColor=white" alt="SQL"/>
+</p>
 
 > **Transforming Aadhaar into a lifecycle-driven identity infrastructure that intelligently adapts to citizen needs, predicts maintenance requirements, and optimizes service delivery across India's digital identity ecosystem.**
 
 ---
 
-## 🎯 **Project Overview**
+##  **Project Overview**
 
-We've created India's **first comprehensive Identity Maintenance Intelligence System** that transforms Aadhaar analytics from static enrollment counting into dynamic lifecycle intelligence. Our breakthrough **Identity Maintenance Frequency (IMF)** metric reveals the true operational burden of India's digital identity infrastructure.
+We've created a **comprehensive Identity Maintenance Intelligence System** that transforms Aadhaar analytics from static enrollment counting into dynamic lifecycle intelligence. Our breakthrough **Identity Maintenance Frequency (IMF)** metric reveals the true operational burden of India's digital identity infrastructure.
 
 ### **Key Innovation: Identity Maintenance Frequency (IMF)**
 ```
 IMF = Total Updates (IML) / Total Enrollments (ICL)
 ```
-- **IMF < 1**: Stable identity creation (good operational efficiency)
-- **IMF > 1**: High maintenance burden (operational stress indicator)  
-- **IMF >> 1**: Critical maintenance pressure (immediate intervention needed)
-
----
-
-## 📊 **Key Findings & Impact**
+##  **Key Findings & Impact**
 
 ### **System Reality Revealed**
 - **5.44M** Total Enrollments (ICL) - New identities created
@@ -39,11 +44,10 @@ IMF = Total Updates (IML) / Total Enrollments (ICL)
 ### **Lifecycle Insights**
 - **97%** of enrollments happen before age 18 (excellent early coverage)
 - **North-East states** show concerning late enrollment patterns
-- **Seasonal patterns**: September-November peaks, March-June lows
-- 
+- **Seasonal patterns**: September-November peaks, March-June lows 
 ---
 
-## 🏗️ **Technical Architecture**
+##  **Technical Architecture**
 
 ```
 UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics → Policy Insights
@@ -52,10 +56,18 @@ UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics �
 ### **Data Pipeline**
 1. **Data Ingestion**: 3 master datasets (Enrollment, Demographic, Biometric)
 2. **Data Cleaning**: Comprehensive state/district standardization
-3. **View Creation**: 12+ optimized SQL views
+3. **View Creation**: 11 optimized SQL views
 4. **KPI Development**: Advanced metrics (IMF, Age Share, Seasonality)
 5. **Visualization**: 5-page interactive Power BI dashboard
 
+### **Derived Metrics**
+1. **Identity Creation Load (ICL)** = Total new enrollments
+2. **Identity Maintenance Load (IML)** = Total updates (demo + bio)
+3. **Identity Maintenance Frequency (IMF)** = IML/ICL ratio
+4. **Age Distribution** = Population of Age Group/Population of all ages
+5. **Monthly Metrics** = Total enrollments & updates grouped month-wise
+6. **Seasonal Identity Maintenance Pressure (SIMP)** = Monthly Updates/Avg Monthly Updates
+   
 ### **Technology Stack**
 - **Data Platform**: Snowflake Cloud Data Warehouse
 - **Analytics**: SQL Views & Advanced KPIs
@@ -65,7 +77,7 @@ UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics �
 
 ---
 
-## 📁 **Repository Structure**
+## **Repository Structure**
 
 ```
 ├── data/
@@ -89,7 +101,7 @@ UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics �
 
 ---
 
-## 🚀 **Quick Start**
+## **Quick Start**
 
 ### **Prerequisites**
 - Snowflake account with COMPUTE_WH warehouse
@@ -100,7 +112,7 @@ UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics �
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/your-username/uidai-hackathon-2026.git
+   git clone https://github.com/vineet12kotari/uidai-hackathon-2026.git
    cd uidai-hackathon-2026
    ```
 
@@ -134,7 +146,7 @@ UIDAI Raw Data → Snowflake Views → KPI Calculations → Power BI Analytics �
 
 ---
 
-## 📊 **Dashboard Pages**
+## **Dashboard Pages**
 
 ### **Page 1: Overall Scenario**
 Executive summary with KPI cards, trend analysis, and state rankings
@@ -178,7 +190,7 @@ Temporal intelligence for predictive planning
 
 ---
 
-## 🔍 **Key SQL Views & KPIs**
+## **Key SQL Views & KPIs**
 
 ### **Core Views**
 - `FACT_AADHAAR_ACTIVITY` - Master fact table
@@ -200,7 +212,7 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ---
 
-## 🎯 **Policy Recommendations**
+## **Policy Recommendations**
 
 ### **Immediate Actions (0-3 months)**
 - Deploy additional resources to top 10 IMF districts
@@ -213,7 +225,7 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ---
 
-## 📈 **Results & Validation**
+##  **Results & Validation**
 
 ### **Data Quality Metrics**
 - **100%** state/district name standardization
@@ -226,11 +238,10 @@ FROM FACT_AADHAAR_ACTIVITY;
 - **Real-time** dashboard refresh capability
 ---
 
-## 🏆 **Competition Advantages**
+##  **Practical Advantages**
 
 ### **Technical Excellence**
-- **First-of-its-kind** IMF metric innovation
-- **Enterprise-grade** Snowflake implementation
+- **Cloud based fully managed** Snowflake implementation
 - **Interactive** 5-page narrative dashboard
 - **Comprehensive** data cleaning pipeline
 
@@ -242,12 +253,12 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ---
 
-## 📄 **Documentation**
+## **Documentation**
 
-- [📋 Complete Submission Document](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/documentation/UIDAI%20DATA%20HACKATHON%202026%20(1).pdf)
+- [ Complete Submission Document](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/documentation/UIDAI%20DATA%20HACKATHON%202026%20(1).pdf)
 ---
 
-## 📜 **License & Compliance**
+## **License & Compliance**
 
 - **Data Privacy**: Only UIDAI-provided, aggregated, anonymized datasets used
 - **Compliance**: Adheres to all UIDAI data usage guidelines
@@ -255,7 +266,7 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ---
 
-## 🌟 **Acknowledgments**
+##  **Acknowledgments**
 
 - **UIDAI** for providing comprehensive datasets and a hackathon opportunity
 - **Government of India** for Digital India initiative
@@ -263,7 +274,7 @@ FROM FACT_AADHAAR_ACTIVITY;
 
 ---
 
-## 📞 **Contact & Support**
+##  **Contact & Support**
 
 For questions about implementation, methodology, or collaboration opportunities:
 
