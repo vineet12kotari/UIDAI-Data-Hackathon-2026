@@ -141,6 +141,8 @@ Executive summary with KPI cards, trend analysis, and state rankings
 - Total ICL, IML, Average IMF, Districts covered
 - Daily enrollment vs update trends
 - Top 10 states by maintenance burden
+   
+![Page_1](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/powerbi_1/screenshots/page1_overall_scenario.png)
 
 ### **Page 2: Ranking States by Monthly Updates**
 Temporal patterns and seasonal analysis
@@ -148,11 +150,15 @@ Temporal patterns and seasonal analysis
 - Seasonal cycles and comparative analysis
 - Resource planning opportunities
 
+![Page_2](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/powerbi_1/screenshots/page2_monthly_updates.png)
+
 ### **Page 3: Geographic Hotspots**
 Map-based intelligence showing pressure concentration
 - Interactive map with IMF color coding
 - District-level hotspot identification
 - Geographic clustering analysis
+
+![Page_3](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/powerbi_1/screenshots/page3_geographic_hotspots.png)
 
 ### **Page 4: Analysis by Date, Age & District Level**
 Multi-dimensional deep dive
@@ -160,11 +166,15 @@ Multi-dimensional deep dive
 - District ranking by maintenance frequency
 - Month-start enrollment anomaly detection
 
+![Page_4](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/powerbi_1/screenshots/page4_age_district_analysis.png)
+
 ### **Page 5: Seasons & Transitions**
 Temporal intelligence for predictive planning
 - Seasonality heatmap by state
 - Age transition analysis
 - Lifecycle success metrics
+
+![Page_5](https://github.com/vineet12kotari/UIDAI-Data-Hackathon-2026/blob/main/powerbi_1/screenshots/page5_seasonality.png)
 
 ---
 
