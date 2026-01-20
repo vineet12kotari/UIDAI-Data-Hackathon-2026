@@ -1,0 +1,318 @@
+-- =====================================================
+-- UIDAI DATA HACKATHON 2026 - KPI DEVELOPMENT SCRIPT
+-- Project: Aadhaar as a Lifecycle-Driven Identity Infrastructure
+-- Purpose: Create advanced KPIs and analytical views
+-- =====================================================
+
+USE DATABASE merged_dataset_2;
+USE SCHEMA merged_dataset_2;
+
+-- =====================================================
+-- IDENTITY MAINTENANCE FREQUENCY (IMF) - CORE INNOVATION
+-- =====================================================
+
+-- Daily IMF by State and District
+CREATE OR REPLACE VIEW KPI_IMF AS
+SELECT 
+    DATE,
+    STATE,
+    DISTRICT,
+    ICL,
+    IML,
+    CASE 
+        WHEN ICL = 0 THEN NULL
+        ELSE ROUND(IML / ICL, 2)
+    END AS IMF
+FROM FACT_AADHAAR_ACTIVITY;
+
+-- District-Level IMF (Time Agnostic)
+CREATE OR REPLACE VIEW KPI_IMF_DISTRICT AS
+SELECT 
+    STATE,
+    DISTRICT,
+    SUM(IML) AS TOTAL_UPDATES,
+    SUM(ICL) AS TOTAL_ENROLLMENTS,
+    CASE
+        WHEN SUM(ICL) = 0 THEN NULL
+        ELSE ROUND(SUM(IML) / SUM(ICL), 2)
+    END AS IMF_DISTRICT
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY STATE, DISTRICT
+ORDER BY IMF_DISTRICT DESC;
+
+-- State-Level IMF (Time Agnostic)
+CREATE OR REPLACE VIEW KPI_IMF_STATE_UT AS
+SELECT 
+    STATE,
+    SUM(IML) AS TOTAL_UPDATES,
+    SUM(ICL) AS TOTAL_ENROLLMENTS,
+    CASE
+        WHEN SUM(ICL) = 0 THEN NULL
+        ELSE ROUND(SUM(IML) / SUM(ICL), 2)
+    END AS IMF_STATE
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY STATE
+ORDER BY IMF_STATE DESC;
+
+-- =====================================================
+-- AGE SHARE ANALYSIS - LIFECYCLE INTELLIGENCE
+-- =====================================================
+
+-- State-Level Age Share Analysis
+CREATE OR REPLACE VIEW KPI_AGE_SHARE_STATE AS
+SELECT 
+    STATE,
+    SUM(AGE_0_5) AS TOTAL_0_5,
+    SUM(AGE_5_17) AS TOTAL_5_17,
+    SUM(AGE_18_GREATER) AS TOTAL_18_GREATER,
+    SUM(ICL) AS TOTAL_ENROLLMENTS,
+    ROUND(SUM(AGE_0_5) / NULLIF(SUM(ICL), 0), 3) AS SHARE_0_5,
+    ROUND(SUM(AGE_5_17) / NULLIF(SUM(ICL), 0), 3) AS SHARE_5_17,
+    ROUND(SUM(AGE_18_GREATER) / NULLIF(SUM(ICL), 0), 3) AS SHARE_18_GREATER
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY STATE
+ORDER BY SHARE_18_GREATER DESC;
+
+-- District-Level Age Share Analysis
+CREATE OR REPLACE VIEW KPI_AGE_SHARE_DISTRICT AS
+SELECT 
+    STATE,
+    DISTRICT,
+    SUM(AGE_0_5) AS TOTAL_0_5,
+    SUM(AGE_5_17) AS TOTAL_5_17,
+    SUM(AGE_18_GREATER) AS TOTAL_18_GREATER,
+    SUM(ICL) AS TOTAL_ENROLLMENTS,
+    ROUND(SUM(AGE_0_5) / NULLIF(SUM(ICL), 0), 3) AS SHARE_0_5,
+    ROUND(SUM(AGE_5_17) / NULLIF(SUM(ICL), 0), 3) AS SHARE_5_17,
+    ROUND(SUM(AGE_18_GREATER) / NULLIF(SUM(ICL), 0), 3) AS SHARE_18_GREATER
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY STATE, DISTRICT
+ORDER BY SHARE_18_GREATER DESC;
+
+-- =====================================================
+-- SEASONALITY ANALYSIS - TEMPORAL INTELLIGENCE
+-- =====================================================
+
+-- Monthly Activity Aggregation
+CREATE OR REPLACE VIEW KPI_MONTHLY_ACTIVITY AS
+SELECT 
+    STATE,
+    -- Month name for visualization
+    TO_VARCHAR(DATE_FROM_PARTS(2025, EXTRACT(MONTH FROM DATE), 1), 'Mon') AS MONTH,
+    EXTRACT(MONTH FROM DATE) AS MONTH_NUM,
+    -- Aggregated metrics
+    SUM(ICL) AS MONTHLY_ENROLLMENTS,
+    SUM(IML) AS MONTHLY_UPDATES
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY STATE, EXTRACT(MONTH FROM DATE)
+ORDER BY STATE, MONTH_NUM;
+
+-- Seasonality Index Calculation
+CREATE OR REPLACE VIEW KPI_SEASONALITY AS
+SELECT 
+    STATE,
+    MONTH,
+    MONTH_NUM,
+    MONTHLY_UPDATES,
+    -- Baseline per state
+    AVG(MONTHLY_UPDATES) OVER (PARTITION BY STATE) AS AVG_MONTHLY_UPDATES,
+    -- Seasonality Index (Deviation from state average)
+    ROUND(
+        MONTHLY_UPDATES / NULLIF(AVG(MONTHLY_UPDATES) OVER (PARTITION BY STATE), 0), 
+        2
+    ) AS SEASONALITY_INDEX
+FROM KPI_MONTHLY_ACTIVITY
+ORDER BY STATE, MONTH_NUM;
+
+-- =====================================================
+-- GEOGRAPHIC HOTSPOT ANALYSIS
+-- =====================================================
+
+-- District Pressure Classification
+CREATE OR REPLACE VIEW KPI_DISTRICT_CLASSIFICATION AS
+SELECT 
+    STATE,
+    DISTRICT,
+    IMF_DISTRICT,
+    TOTAL_ENROLLMENTS,
+    TOTAL_UPDATES,
+    CASE 
+        WHEN IMF_DISTRICT IS NULL THEN 'NO_DATA'
+        WHEN IMF_DISTRICT < 0.7 THEN 'LOW_PRESSURE'
+        WHEN IMF_DISTRICT BETWEEN 0.7 AND 1.0 THEN 'MODERATE_PRESSURE'
+        WHEN IMF_DISTRICT > 1.0 THEN 'HIGH_PRESSURE'
+        ELSE 'UNKNOWN'
+    END AS PRESSURE_CATEGORY,
+    CASE 
+        WHEN TOTAL_ENROLLMENTS > 10000 THEN 'HIGH_VOLUME'
+        WHEN TOTAL_ENROLLMENTS BETWEEN 1000 AND 10000 THEN 'MEDIUM_VOLUME'
+        WHEN TOTAL_ENROLLMENTS < 1000 THEN 'LOW_VOLUME'
+        ELSE 'NO_VOLUME'
+    END AS VOLUME_CATEGORY
+FROM KPI_IMF_DISTRICT;
+
+-- State Performance Summary
+CREATE OR REPLACE VIEW KPI_STATE_PERFORMANCE AS
+SELECT 
+    STATE,
+    IMF_STATE,
+    TOTAL_ENROLLMENTS,
+    TOTAL_UPDATES,
+    -- Performance classification
+    CASE 
+        WHEN IMF_STATE IS NULL THEN 'NO_DATA'
+        WHEN IMF_STATE < 5 THEN 'EXCELLENT'
+        WHEN IMF_STATE BETWEEN 5 AND 10 THEN 'GOOD'
+        WHEN IMF_STATE BETWEEN 10 AND 15 THEN 'MODERATE'
+        WHEN IMF_STATE BETWEEN 15 AND 20 THEN 'CONCERNING'
+        WHEN IMF_STATE > 20 THEN 'CRITICAL'
+        ELSE 'UNKNOWN'
+    END AS PERFORMANCE_CATEGORY,
+    -- Rank by IMF
+    ROW_NUMBER() OVER (ORDER BY IMF_STATE DESC) AS IMF_RANK
+FROM KPI_IMF_STATE_UT;
+
+-- =====================================================
+-- ANOMALY DETECTION
+-- =====================================================
+
+-- Month-Start Enrollment Anomaly
+CREATE OR REPLACE VIEW KPI_MONTH_START_ANOMALY AS
+SELECT 
+    DATE,
+    STATE,
+    DISTRICT,
+    ICL,
+    IML,
+    IS_MONTH_START,
+    -- Compare month-start vs regular days
+    CASE 
+        WHEN IS_MONTH_START = 1 THEN 'MONTH_START'
+        ELSE 'REGULAR_DAY'
+    END AS DAY_TYPE
+FROM FACT_DATE_ENRICHED
+WHERE ICL > 0 OR IML > 0;
+
+-- High Activity Days Detection
+CREATE OR REPLACE VIEW KPI_HIGH_ACTIVITY_DAYS AS
+SELECT 
+    DATE,
+    STATE,
+    SUM(ICL) AS DAILY_ENROLLMENTS,
+    SUM(IML) AS DAILY_UPDATES,
+    -- Calculate percentiles for anomaly detection
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY SUM(ICL)) 
+        OVER (PARTITION BY STATE) AS P95_ENROLLMENTS,
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY SUM(IML)) 
+        OVER (PARTITION BY STATE) AS P95_UPDATES,
+    -- Flag anomalous days
+    CASE 
+        WHEN SUM(ICL) > PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY SUM(ICL)) 
+                         OVER (PARTITION BY STATE) THEN 'HIGH_ENROLLMENT_ANOMALY'
+        WHEN SUM(IML) > PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY SUM(IML)) 
+                         OVER (PARTITION BY STATE) THEN 'HIGH_UPDATE_ANOMALY'
+        ELSE 'NORMAL'
+    END AS ANOMALY_FLAG
+FROM FACT_AADHAAR_ACTIVITY
+GROUP BY DATE, STATE
+ORDER BY DATE, STATE;
+
+-- =====================================================
+-- EXECUTIVE SUMMARY VIEWS
+-- =====================================================
+
+-- Overall System Metrics
+CREATE OR REPLACE VIEW KPI_SYSTEM_OVERVIEW AS
+SELECT 
+    COUNT(DISTINCT STATE) AS TOTAL_STATES,
+    COUNT(DISTINCT DISTRICT) AS TOTAL_DISTRICTS,
+    COUNT(DISTINCT DATE) AS TOTAL_DAYS,
+    SUM(ICL) AS TOTAL_ENROLLMENTS,
+    SUM(IML) AS TOTAL_UPDATES,
+    ROUND(SUM(IML) / NULLIF(SUM(ICL), 0), 2) AS OVERALL_IMF,
+    MIN(DATE) AS DATA_START_DATE,
+    MAX(DATE) AS DATA_END_DATE
+FROM FACT_AADHAAR_ACTIVITY;
+
+-- Top Performers and Concerns
+CREATE OR REPLACE VIEW KPI_TOP_INSIGHTS AS
+SELECT 
+    'TOP_IMF_STATES' AS metric_type,
+    STATE AS entity,
+    IMF_STATE AS value,
+    'CRITICAL_ATTENTION_NEEDED' AS insight
+FROM KPI_IMF_STATE_UT
+WHERE IMF_STATE IS NOT NULL
+ORDER BY IMF_STATE DESC
+LIMIT 5
+
+UNION ALL
+
+SELECT 
+    'LOW_IMF_STATES' AS metric_type,
+    STATE AS entity,
+    IMF_STATE AS value,
+    'BEST_PRACTICES_SOURCE' AS insight
+FROM KPI_IMF_STATE_UT
+WHERE IMF_STATE IS NOT NULL
+ORDER BY IMF_STATE ASC
+LIMIT 5
+
+UNION ALL
+
+SELECT 
+    'LATE_ENROLLMENT_STATES' AS metric_type,
+    STATE AS entity,
+    SHARE_18_GREATER AS value,
+    'AWARENESS_CAMPAIGN_NEEDED' AS insight
+FROM KPI_AGE_SHARE_STATE
+WHERE SHARE_18_GREATER IS NOT NULL
+ORDER BY SHARE_18_GREATER DESC
+LIMIT 5;
+
+-- =====================================================
+-- DATA VALIDATION & QUALITY CHECKS
+-- =====================================================
+
+-- KPI Validation Summary
+CREATE OR REPLACE VIEW KPI_VALIDATION_SUMMARY AS
+SELECT 
+    'IMF_CALCULATION' AS validation_type,
+    COUNT(*) AS total_records,
+    COUNT(CASE WHEN IMF IS NOT NULL THEN 1 END) AS valid_records,
+    COUNT(CASE WHEN IMF IS NULL THEN 1 END) AS null_records,
+    ROUND(AVG(IMF), 2) AS avg_imf,
+    MIN(IMF) AS min_imf,
+    MAX(IMF) AS max_imf
+FROM KPI_IMF
+
+UNION ALL
+
+SELECT 
+    'AGE_SHARE_CALCULATION' AS validation_type,
+    COUNT(*) AS total_records,
+    COUNT(CASE WHEN SHARE_0_5 IS NOT NULL THEN 1 END) AS valid_records,
+    COUNT(CASE WHEN SHARE_0_5 IS NULL THEN 1 END) AS null_records,
+    ROUND(AVG(SHARE_0_5), 3) AS avg_share_0_5,
+    MIN(SHARE_0_5) AS min_share_0_5,
+    MAX(SHARE_0_5) AS max_share_0_5
+FROM KPI_AGE_SHARE_STATE
+
+UNION ALL
+
+SELECT 
+    'SEASONALITY_CALCULATION' AS validation_type,
+    COUNT(*) AS total_records,
+    COUNT(CASE WHEN SEASONALITY_INDEX IS NOT NULL THEN 1 END) AS valid_records,
+    COUNT(CASE WHEN SEASONALITY_INDEX IS NULL THEN 1 END) AS null_records,
+    ROUND(AVG(SEASONALITY_INDEX), 2) AS avg_seasonality,
+    MIN(SEASONALITY_INDEX) AS min_seasonality,
+    MAX(SEASONALITY_INDEX) AS max_seasonality
+FROM KPI_SEASONALITY;
+
+-- =====================================================
+-- COMPLETION MESSAGE
+-- =====================================================
+
+SELECT 'KPI development completed successfully!' AS status,
+       'All analytical views are ready for Power BI integration' AS next_step;
